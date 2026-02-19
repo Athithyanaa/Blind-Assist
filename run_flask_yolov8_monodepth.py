@@ -15,7 +15,8 @@ import torchvision.transforms as transforms
 # -----------------------------
 from ultralytics import YOLO
 print("🔄 Loading YOLOv8s...")
-yolo = YOLO("yolov8s.pt")
+yolo = YOLO("yolov8n.pt")
+#yolo = YOLO("yolov8s.pt")
 print("✅ YOLOv8s loaded!")
 
 # -----------------------------
