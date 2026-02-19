@@ -4,3 +4,4 @@ torchvision
 ultralytics
 numpy
 opencv-python
+gunicorn
