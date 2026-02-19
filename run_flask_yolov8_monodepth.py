@@ -84,6 +84,7 @@ def detect():
         crop = disp[y1:y2, x1:x2]
         if crop.size == 0:
             continue
+        
 
         avg_disp = float(np.mean(crop))
         depth = float(1 / (avg_disp + 1e-6))
