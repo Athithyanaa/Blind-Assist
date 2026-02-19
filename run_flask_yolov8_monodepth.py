@@ -6,6 +6,7 @@ from PIL import Image
 import io
 import base64
 import cv2
+import os
 import sys
 import torchvision.transforms as transforms
 
@@ -31,7 +32,7 @@ depth_decoder = DepthDecoder(num_ch_enc=encoder.num_ch_enc)
 enc = torch.load("monodepth2/models/mono_640x192/encoder.pth", map_location=device)
 encoder.load_state_dict({k: v for k, v in enc.items() if k in encoder.state_dict()})
 
-dec = torch.load("monodepth2/models/mono_640x192/depth.pth", map_location=device)
+dec = torch.load("monodepth2/models/mono_640x192/depth.pth", map_location=device,weights_only=True  )
 depth_decoder.load_state_dict(dec)
 
 encoder.eval()
