@@ -5,3 +5,5 @@ ultralytics
 numpy
 opencv-python
 gunicorn
+Flask
+flask-cors
