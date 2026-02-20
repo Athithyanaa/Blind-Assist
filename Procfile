@@ -1,1 +1,1 @@
-web: gunicorn run_flask_yolov8_monodepth:app
+web: gunicorn run_light:app

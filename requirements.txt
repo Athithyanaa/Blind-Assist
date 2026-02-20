@@ -1,9 +1,10 @@
 flask
+flask-cors
+numpy
+Pillow
+opencv-python-headless
 torch
 torchvision
 ultralytics
-numpy
-opencv-python
-gunicorn
-Flask
-flask-cors
+transformers
+huggingface-hub
