@@ -17,7 +17,7 @@ from ultralytics import YOLO
 print("🔄 Loading YOLOv8s...")
 yolo = YOLO("yolov8n.pt")
 #yolo = YOLO("yolov8s.pt")
-print("✅ YOLOv8s loaded!")
+print("✅ YOLOv8n loaded!")
 
 # -----------------------------
 # Load Monodepth2
