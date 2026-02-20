@@ -12,10 +12,12 @@ import cv2
 import torchvision.transforms as transforms
 
 app = Flask(__name__)
-CORS(app)
+
+# CORS FIX → allow browser POST + OPTIONS preflight
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # ============================================
-# Lazy-loaded models (prevent Render OOM)
+# Lazy-loaded models (Render RAM protection)
 # ============================================
 yolo_model = None
 encoder = None
@@ -24,19 +26,19 @@ md_transform = None
 
 
 # ========================
-# YOLO (lazy)
+# YOLO loader
 # ========================
 def get_yolo():
     global yolo_model
     if yolo_model is None:
         print("🔄 Loading YOLOv8n...")
-        yolo_model = YOLO("yolov8n.pt")   # or yolov8n26.pt
+        yolo_model = YOLO("yolov8n.pt")
         print("✅ YOLO loaded!")
     return yolo_model
 
 
 # ========================
-# Monodepth2 (lazy)
+# Monodepth2 loader
 # ========================
 def get_monodepth():
     global encoder, depth_decoder, md_transform
@@ -79,7 +81,7 @@ def get_monodepth():
 
 
 # ========================
-# Helper: Base64 → OpenCV
+# Base64 → PIL + OpenCV
 # ========================
 def decode_base64_image(b64_string):
     img_data = base64.b64decode(b64_string)
@@ -88,15 +90,21 @@ def decode_base64_image(b64_string):
 
 
 # ========================
-# Route
+# /detect endpoint
 # ========================
-@app.route("/detect", methods=["POST"])
+@app.route("/detect", methods=["POST", "OPTIONS"])
 def detect():
-    print("📩 Request received")
+    # ===========================
+    # Handle CORS preflight
+    # ===========================
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
+    print("📩 POST /detect received")
 
     data = request.json
-    if "image_base64" not in data:
-        return jsonify({"error": "No image_base64 provided"}), 400
+    if not data or "image_base64" not in data:
+        return jsonify({"error": "Missing image_base64"}), 400
 
     pil_img, frame = decode_base64_image(data["image_base64"])
     h_img, w_img, _ = frame.shape
@@ -108,7 +116,6 @@ def detect():
 
     # ---------- Monodepth2 ----------
     encoder, depth_decoder, md_transform = get_monodepth()
-
     input_tensor = md_transform(pil_img).unsqueeze(0)
 
     with torch.no_grad():
@@ -126,14 +133,13 @@ def detect():
         x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
 
         object_name = yolo.names[int(cls)]
-
         crop = disp[y1:y2, x1:x2]
+
         if crop.size == 0:
             continue
 
         avg_disp = float(np.mean(crop))
         depth = float(1 / (avg_disp + 1e-6))
-
         alert_flag = bool(depth < 10.0)
 
         output.append({
@@ -142,11 +148,11 @@ def detect():
             "alert": alert_flag
         })
 
-    return jsonify({"alerts": output})
+    return jsonify({"alerts": output}), 200
 
 
 # ========================
-# Run
+# Run server
 # ========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
