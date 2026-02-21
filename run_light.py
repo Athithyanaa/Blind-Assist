@@ -65,6 +65,12 @@ def decode_base64_image(b64_string):
     frame = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
     return pil_img, frame
 
+# ------------------------------------------------
+# Simple GET endpoint to check server status
+# ------------------------------------------------
+@app.route("/ping", methods=["GET"])
+def ping():
+    return jsonify({"status": "ok", "message": "Server is running!"}), 200
 
 # ------------------------------------------------
 # /detect endpoint
