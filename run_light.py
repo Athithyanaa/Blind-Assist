@@ -1,5 +1,4 @@
 import os
-import sys
 import io
 import base64
 import torch
@@ -44,7 +43,6 @@ def get_depth_model():
             "Intel/dpt-swinv2-tiny-256",
             trust_remote_code=True
         )
-
         depth_processor = DPTImageProcessor.from_pretrained(
             "Intel/dpt-swinv2-tiny-256",
             trust_remote_code=True
