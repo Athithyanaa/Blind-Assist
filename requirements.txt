@@ -8,3 +8,4 @@ torchvision
 ultralytics
 transformers
 huggingface-hub
+gunicorn
