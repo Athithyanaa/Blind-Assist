@@ -1,6 +1,6 @@
 mono-yolo-depthestimation !!!
 
-YOLOv5: I'm using online pretrained model (torch.hub.load from GitHub).
+YOLOv8: I'm using online pretrained model (torch.hub.load from GitHub).
 
 Monodepth2: I'm using an offline saved disparity map (.npy file), which means the model inference was done earlier, not in this script.
 
